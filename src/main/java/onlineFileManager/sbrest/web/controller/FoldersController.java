@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ import onlineFileManager.sbrest.model.dao.FileRepository;
 import onlineFileManager.sbrest.model.dao.FileVersionRepository;
 import onlineFileManager.sbrest.model.dao.FolderDao;
 
+@CrossOrigin
 @RestController
 public class FoldersController {
 
@@ -92,6 +94,7 @@ public class FoldersController {
 			FileFolderDTO dto = new FileFolderDTO();
 			dto.setId(folder.getId());
 			dto.setName(folder.getName());
+			//dto.setParentFolderId(folder.getParentFolder().getId());
 			dto.setParentFolderId(folder.getParentFolder().getId());
 			dto.setFolder(true);
 			dtos.add(dto);
@@ -101,7 +104,8 @@ public class FoldersController {
 			FileFolderDTO dto = new FileFolderDTO();
 			dto.setId(file.getId());
 			dto.setName(file.getName());
-			dto.setParentFolderId(file.getFolder().getId());
+			//dto.setParentFolderId(file.getFolder().getId());
+			dto.setParentFolderId(file.getFolder().getParentFolder().getId());
 			dto.setType(file.getType());
 			dto.setSize(file.getSize());
 			dto.setFolder(false);
@@ -135,7 +139,7 @@ public class FoldersController {
 	}
 
 	// Delete folder and its files
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/folders/{id}")
 	public String deleteFolder(@PathVariable Integer id) {
 
 		// Get the folder object that's going to be deleted
