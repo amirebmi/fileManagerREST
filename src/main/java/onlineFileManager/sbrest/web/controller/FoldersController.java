@@ -1,6 +1,5 @@
 package onlineFileManager.sbrest.web.controller;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
+//import org.springframework.web.server.ResponseStatusException;
 
 import onlineFileManager.sbrest.model.File;
 import onlineFileManager.sbrest.model.FileFolderDTO;
@@ -81,10 +80,10 @@ public class FoldersController {
 		List<Folder> folders = folderDao.getSubFolders(id);
 		List<File> files = fileDao.getFiles(id);
 
-		// if there's no folder and file in the directory
-		if (folders.size() == 0 && files.size() == 0) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No files and folders");
-		}
+//		// if there's no folder and file in the directory
+//		if (folders.size() == 0 && files.size() == 0) {
+//			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No files and folders");
+//		}
 
 		// List to merge files and folders
 		List<FileFolderDTO> dtos = new ArrayList<FileFolderDTO>();
@@ -94,7 +93,6 @@ public class FoldersController {
 			FileFolderDTO dto = new FileFolderDTO();
 			dto.setId(folder.getId());
 			dto.setName(folder.getName());
-			//dto.setParentFolderId(folder.getParentFolder().getId());
 			dto.setParentFolderId(folder.getParentFolder().getId());
 			dto.setFolder(true);
 			dtos.add(dto);
@@ -104,7 +102,7 @@ public class FoldersController {
 			FileFolderDTO dto = new FileFolderDTO();
 			dto.setId(file.getId());
 			dto.setName(file.getName());
-			//dto.setParentFolderId(file.getFolder().getId());
+			// dto.setParentFolderId(file.getFolder().getId());
 			dto.setParentFolderId(file.getFolder().getParentFolder().getId());
 			dto.setType(file.getType());
 			dto.setSize(file.getSize());
@@ -112,6 +110,35 @@ public class FoldersController {
 			dtos.add(dto);
 		}
 		return dtos; // return an object that has both files and folders
+	}
+
+	// get parent folder name (when in a folder, get the parent folder name)
+	@GetMapping("/folders/parentId/{id}")
+	public FolderDto getParentInfo(@PathVariable Integer id) {
+		Folder folderObject = folderDao.getFolder(id);
+
+		if (folderObject.getParentFolder() == null) {
+
+			FolderDto folderDto = new FolderDto();
+
+			return folderDto;
+		}else {
+			FolderDto folderDto = new FolderDto(folderObject.getParentFolder().getId(),
+					folderObject.getParentFolder().getName());
+			
+			return folderDto;
+		}
+	}
+	
+	// get parent folder name (when in a folder, get the parent folder name)
+	@GetMapping("/folders/parentName/{id}")
+	public String getParentName(@PathVariable Integer id) {
+		Folder folderObject = folderDao.getFolder(id);
+		
+		if (folderObject != null) {
+			return folderObject.getName();
+		}
+		return "";
 	}
 
 	// Create a new folder

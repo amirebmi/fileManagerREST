@@ -32,6 +32,17 @@ public class FolderDto {
 
 	}
 
+	public FolderDto(int parentId, String parentName) {
+		this.id = parentId;
+		this.name = parentName;
+	}
+
+	public FolderDto(int id) {
+
+		this.id = null;
+
+	}
+
 	public Integer getId() {
 		return id;
 	}
